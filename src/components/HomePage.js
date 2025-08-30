@@ -46,10 +46,8 @@ function HomePage() {
       <style>{`
         /* =============================
            FLUID / RESPONSIVE TYPOGRAPHY
-           Only text scales down on smaller viewports
            ============================= */
         :root { 
-          /* Clamp(min, preferred, max) */
           --fs-hero: clamp(1.8rem, 6vw + 0.5rem, 5rem);
           --fs-brand: clamp(0.95rem, 2.2vw + 0.2rem, 1.2rem);
           --fs-nav: clamp(0.9rem, 1.8vw + 0.2rem, 1rem);
@@ -58,7 +56,6 @@ function HomePage() {
           --fs-body: clamp(0.9rem, 1.3vw + 0.2rem, 1rem);
           --fs-small: clamp(0.8rem, 1.2vw, 0.95rem);
         }
-
         .txt-hero { font-size: var(--fs-hero); line-height: 1.1; }
         .txt-brand { font-size: var(--fs-brand); }
         .txt-nav { font-size: var(--fs-nav); }
@@ -67,35 +64,68 @@ function HomePage() {
         .txt-body { font-size: var(--fs-body); }
         .txt-small { font-size: var(--fs-small); }
 
-        /* Keep layout spacing mostly stable; only trim paddings a bit on very small screens */
-        @media (max-width: 640px) {
-          .pad-header { padding: 1.5rem; }
-          .nav-pad { padding: 0.5rem 1rem; }
-          .section-title { padding-left: 1.25rem; }
-        }
-
+        /* Animations & hovers */
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px);} to { opacity: 1; transform: translateY(0);} }
         .fade-in { animation: fadeInUp 0.6s ease forwards; }
         .card:hover, .linkBtn:hover, .yearBtn:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
 
+        /* Footer links & socials */
         .footer-link { color: #fff; text-decoration: none; position: relative; transition: color 0.3s ease; }
         .footer-link::after { content: ''; position: absolute; left: 0; bottom: -2px; width: 0%; height: 2px; background-color: #fbc02d; transition: width 0.3s ease; }
         .footer-link:hover { color: #fbc02d; }
         .footer-link:hover::after { width: 100%; }
-
         .social-icon { color: #fff; transition: transform 0.3s ease, color 0.3s ease; }
         .social-icon:hover { transform: scale(1.3); color: #fbc02d; }
 
+        /* Contact button */
         .contact-btn { display: inline-flex; align-items: center; background-color: #fbc02d; color: #000; padding: 0.65rem 0.8rem; border-radius: 11px; text-decoration: none; gap: 0.5rem; font-weight: 500; transition: all 0.3s ease; }
         .contact-btn:hover { transform: scale(1.05); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); background-color: #ffe066; }
 
-        /* Prevent card resizing; keep images contained */
-        .card { width: 300px; height: 180px; border-radius: 10px; overflow: hidden; background-color: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.1); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 1rem; transition: all 0.3s ease; }
+        /* =============================
+           Cards: fleksibel di mobile
+           ============================= */
+        .card {
+          width: clamp(240px, 46vw, 300px);
+          height: clamp(150px, 28vw, 180px);
+          border-radius: 10px;
+          overflow: hidden;
+          background-color: #fff;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+          cursor: pointer;
+          display: flex; align-items: center; justify-content: center;
+          padding: 1rem;
+          transition: all 0.3s ease;
+        }
         .card img { width: 100%; height: 100%; object-fit: contain; }
 
-        /* On tiny screens, allow the card to shrink just a touch to avoid horizontal scroll, but layout stays the same */
-        @media (max-width: 380px) {
-          .card { width: 270px; height: 165px; }
+        /* Containers */
+        .section-container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
+
+        /* Mobile polish */
+        @media (max-width: 768px) {
+          .nav-pad { padding: 0.5rem 1rem !important; }
+          .txt-nav { line-height: 1.6; }
+          .hero { min-height: 62vh !important; }
+          .pad-header { padding: 1.25rem !important; }
+          .cards { gap: 1rem !important; }
+        }
+        @media (max-width: 480px) {
+          :root {
+            --fs-hero: clamp(1.6rem, 7vw + 0.2rem, 3rem);
+            --fs-h2:   clamp(1.05rem, 3.8vw, 1.5rem);
+            --fs-body: clamp(0.95rem, 3.2vw, 1rem);
+          }
+          .txt-small { line-height: 1.5; }
+        }
+
+        /* Hilangkan efek hover di perangkat sentuh agar tak 'melompat' */
+        @media (hover: none) {
+          .card:hover { transform: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        }
+
+        /* iOS safe area untuk navbar sticky */
+        @supports (padding-top: env(safe-area-inset-top)) {
+          .nav-pad { padding-top: calc(0.5rem + env(safe-area-inset-top)); }
         }
       `}</style>
 
@@ -157,7 +187,11 @@ function HomePage() {
         </ul>
       </nav>
 
-      <header style={{ background: `url(${headerBackground}) center/cover`, minHeight: '80vh', position: 'relative', color: '#fff', textAlign: 'center' }}>
+      {/* Hero */}
+      <header
+        className="hero"
+        style={{ background: `url(${headerBackground}) center/cover`, minHeight: '80vh', position: 'relative', color: '#fff', textAlign: 'center' }}
+      >
         <div className="pad-header" style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '2rem' }}>
           <h1 className="txt-hero" style={{ marginBottom: '1rem' }}>DATABASE LINGKUNGAN HIDUP & KEHUTANAN</h1>
           <p className="txt-small" style={{ marginBottom: '1rem' }}>
@@ -167,28 +201,20 @@ function HomePage() {
       </header>
 
       {/* Judul Section */}
-      <div
-        style={{
-          maxWidth: '1200px', 
-          margin: '0 auto',
-          padding: '2rem 1rem 0',
-          textAlign: 'center'
-        }}
-      >
+      <div className="section-container" style={{ padding: '2rem 1rem 0', textAlign: 'center' }}>
         <h2 className="txt-h2" style={{ fontWeight: 600, color: palette.darkGreen }}>
           Link Terkait:
         </h2>
       </div>
 
+      {/* Cards */}
       <section
-        className="fade-in"
+        className="fade-in cards section-container"
         style={{
           display: 'flex',
           flexWrap: 'wrap',
           gap: '1.5rem',
-          justifyContent: 'center', 
-          maxWidth: '1200px',          
-          margin: '0 auto',
+          justifyContent: 'center',
           padding: '0.5rem 1rem'
         }}
       >
@@ -203,6 +229,7 @@ function HomePage() {
         ))}
       </section>
 
+      {/* Footer */}
       <footer style={{ backgroundColor: palette.green, color: '#fff', padding: '3rem 2rem', marginTop: '4rem', transition: smooth }}>
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', maxWidth: '1200px', margin: '0 auto', gap: '1rem' }}>
           <div style={{ flex: '15 1 250px' }}>

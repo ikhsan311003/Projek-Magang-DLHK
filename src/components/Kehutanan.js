@@ -23,8 +23,10 @@ function Kehutanan() {
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
 
+  // Tutup dropdown saat pindah rute
   useEffect(() => { setShowDropdown(false); }, [location.pathname]);
 
+  // Navbar shadow saat scroll
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener('scroll', handleScroll);
@@ -53,14 +55,14 @@ function Kehutanan() {
     <div style={{ fontFamily: 'Inter, sans-serif', backgroundColor: palette.lightBg, color: palette.darkGreen }}>
       <style>{`
         /* =============================
-           FLUID / RESPONSIVE TYPOGRAPHY (text only shrinks)
+           FLUID / RESPONSIVE TYPOGRAPHY (teks saja yang mengecil)
            ============================= */
         :root {
           --fs-hero: clamp(1.8rem, 6vw + 0.5rem, 5rem);
           --fs-brand: clamp(0.95rem, 2.2vw + 0.2rem, 1.2rem);
           --fs-nav: clamp(0.9rem, 1.8vw + 0.2rem, 1rem);
           --fs-h2: clamp(1.1rem, 1.9vw + 0.2rem, 1.8rem);
-          --fs-h3: clamp(0.9rem, 1.4vw + 0.2rem, 1.1rem);
+          --fs-h3: clamp(1rem, 1.6vw + 0.2rem, 1.2rem);
           --fs-body: clamp(0.9rem, 1.3vw + 0.2rem, 1rem);
           --fs-small: clamp(0.8rem, 1.2vw, 0.95rem);
         }
@@ -72,33 +74,63 @@ function Kehutanan() {
         .txt-body{ font-size: var(--fs-body); }
         .txt-small{ font-size: var(--fs-small); }
 
-        /* Slight padding trim on very small screens */
-        @media (max-width: 640px) {
-          .nav-pad { padding: 0.5rem 1rem !important; }
-          .section-title { padding-left: 1.25rem !important; }
-          .pad-header { padding: 1.5rem !important; }
-        }
-
         @keyframes fadeInUp { from{opacity:0; transform: translateY(20px);} to{opacity:1; transform: translateY(0);} }
         .fade-in { animation: fadeInUp 0.6s ease forwards; }
-        .card:hover, .linkBtn:hover, .yearBtn:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
 
+        /* Link footer & ikon */
         .footer-link{ color:#fff; text-decoration:none; position:relative; transition: color 0.3s ease; }
         .footer-link::after{ content:''; position:absolute; left:0; bottom:-2px; width:0%; height:2px; background-color:#fbc02d; transition: width 0.3s ease; }
         .footer-link:hover{ color:#fbc02d; }
         .footer-link:hover::after{ width:100%; }
-
         .social-icon{ color:#fff; transition: transform 0.3s ease, color 0.3s ease; }
         .social-icon:hover{ transform: scale(1.3); color:#fbc02d; }
 
         .contact-btn{ display:inline-flex; align-items:center; background-color:#fbc02d; color:#000; padding:0.65rem 0.8rem; border-radius:11px; text-decoration:none; gap:0.5rem; font-weight:500; transition: all 0.3s ease; }
         .contact-btn:hover{ transform: scale(1.05); box-shadow: 0 4px 10px rgba(0,0,0,0.2); background-color:#ffe066; }
 
-        /* Card sizing: keep layout; allow tiny shrink on very small screens */
-        .data-card{ width:170px; background:#fff; border-radius:10px; overflow:hidden; box-shadow:0 3px 8px rgba(0,0,0,0.1); cursor:pointer; transition: all 0.3s ease; }
-        .data-card img{ width:100%; height:160px; object-fit:cover; }
-        .data-card h3{ margin:0; font-weight:700; }
-        @media (max-width: 380px){ .data-card{ width:150px; } .data-card img{ height:145px; } }
+        /* =============================
+           Kartu data: fleksibel di mobile
+           ============================= */
+        .data-card{
+          width: clamp(160px, 42vw, 200px);
+          background:#fff;
+          border-radius:10px;
+          overflow:hidden;
+          box-shadow:0 3px 8px rgba(0,0,0,0.1);
+          cursor:pointer;
+          transition: all 0.3s ease;
+        }
+        .data-card img{ width:100%; height:150px; object-fit:cover; }
+        .data-card h3{ margin:0; font-weight:700; font-size: var(--fs-small); }
+
+        /* Kontainer utilitas */
+        .section-container{ max-width:1200px; margin:0 auto; padding:0 1rem; }
+
+        /* Mobile polish */
+        @media (max-width: 768px){
+          .nav-pad { padding: 0.5rem 1rem !important; }
+          .hero { min-height: 65vh !important; }
+          .pad-header { padding: 1.25rem !important; }
+        }
+        @media (max-width: 480px){
+          .data-card{ width: clamp(140px, 46vw, 180px); }
+          .data-card img{ height: 130px; }
+          :root{
+            --fs-hero: clamp(1.6rem, 7vw + 0.2rem, 3rem);
+            --fs-h2:   clamp(1.05rem, 3.8vw, 1.5rem);
+            --fs-body: clamp(0.95rem, 3.2vw, 1rem);
+          }
+        }
+
+        /* Matikan hover yang agresif di perangkat sentuh */
+        @media (hover:none){
+          .data-card:hover{ transform:none; box-shadow:0 3px 8px rgba(0,0,0,0.1); }
+        }
+
+        /* iOS notch safe area untuk navbar sticky */
+        @supports (padding-top: env(safe-area-inset-top)) {
+          .nav-pad { padding-top: calc(0.5rem + env(safe-area-inset-top)); }
+        }
       `}</style>
 
       {/* Navigation */}
@@ -117,7 +149,6 @@ function Kehutanan() {
           <span className="txt-brand" style={{ marginLeft: '12px', fontWeight: 600 }}>Dinas Lingkungan Hidup & Kehutanan</span>
         </div>
         <ul style={{ display: 'flex', listStyle: 'none', gap: '1.5rem', margin: 0, position: 'relative' }}>
-          {/* Home */}
           <li
             className="txt-nav"
             style={{ cursor: 'pointer', fontWeight: 500, borderBottom: location.pathname === '/' ? `3px solid ${palette.yellow}` : 'none', paddingBottom: '4px', transition: smooth }}
@@ -125,7 +156,6 @@ function Kehutanan() {
           >
             Home
           </li>
-          {/* Dropdown Kehutanan */}
           <li
             className="txt-nav"
             style={{ cursor: 'pointer', position: 'relative', fontWeight: 700, borderBottom: location.pathname.startsWith('/kehutanan') ? `3px solid ${palette.yellow}` : 'none', paddingBottom: '4px', transition: smooth }}
@@ -134,7 +164,7 @@ function Kehutanan() {
             Kehutanan ▾
             {showDropdown && (
               <ul style={{ position: 'absolute', top: '100%', right: 0, backgroundColor: '#fff', boxShadow: '0 4px 8px rgba(0,0,0,0.1)', borderRadius: '6px', overflowY: 'auto', maxHeight: '200px', zIndex: 999, padding: '0.5rem', listStyle: 'none', width: '180px' }}>
-                {[ 
+                {[
                   { label: 'Lingkungan Hidup', path: '/lingkungan-hidup' },
                   { label: 'Kehutanan', path: '/kehutanan' }
                 ].map(({ label, path }) => (
@@ -143,8 +173,6 @@ function Kehutanan() {
                     onClick={() => { navigate(path); setShowDropdown(false); }}
                     className="txt-body"
                     style={{ padding: '0.45rem 0.6rem', cursor: 'pointer', borderBottom: '1px solid #eee', backgroundColor: location.pathname === path ? '#f0f0f0' : 'transparent', fontWeight: location.pathname === path ? 'bold' : 'normal', transition: 'all 0.2s ease' }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = '#f0f0f0'}
-                    onMouseLeave={(e) => { if (location.pathname !== path) { e.currentTarget.style.background = 'transparent'; } }}
                   >
                     {label}
                   </li>
@@ -155,7 +183,11 @@ function Kehutanan() {
         </ul>
       </nav>
 
-      <header style={{ background: `url(${headerBackground}) center/cover`, minHeight: '80vh', position: 'relative', color: '#fff', textAlign: 'center' }}>
+      {/* Hero */}
+      <header
+        className="hero"
+        style={{ background: `url(${headerBackground}) center/cover`, minHeight: '80vh', position: 'relative', color: '#fff', textAlign: 'center' }}
+      >
         <div className="pad-header" style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '2rem' }}>
           <h1 className="txt-hero" style={{ marginBottom: '1rem' }}>KEHUTANAN</h1>
           <p className="txt-small" style={{ marginBottom: '1rem' }}>
@@ -165,37 +197,19 @@ function Kehutanan() {
       </header>
       
       {/* Judul Section */}
-      <div
-        style={{
-          maxWidth: '1200px',
-          margin: '0 auto',
-          padding: '2rem 1rem 0',
-          textAlign: 'center' 
-        }}
-      >
+      <div className="section-container" style={{ padding: '2rem 1rem 0', textAlign: 'center' }}>
         <h2 className="txt-h2" style={{ fontWeight: 600, color: palette.darkGreen }}>
           Data & Informasi:
         </h2>
       </div>
 
+      {/* Cards */}
       <section
-        className="fade-in"
-        style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '1.5rem',
-          justifyContent: 'center', 
-          maxWidth: '1200px',   
-          margin: '0 auto',
-          padding: '0.5rem 1rem'
-        }}
+        className="fade-in section-container"
+        style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', justifyContent: 'center', padding: '0.5rem 1rem' }}
       >
         {cards.map(({ img, url, title }, index) => (
-          <div
-            key={index}
-            className="data-card"
-            onClick={() => window.open(url, '_blank')}
-          >
+          <div key={index} className="data-card" onClick={() => window.open(url, '_blank')}>
             <img src={img} alt={title} />
             <div style={{ padding: '1rem', textAlign: 'center' }}>
               <h3 className="txt-h3">{title}</h3>
@@ -204,13 +218,16 @@ function Kehutanan() {
         ))}
       </section>
 
+      {/* Footer */}
       <footer style={{ backgroundColor: palette.green, color: '#fff', padding: '3rem 2rem', marginTop: '4rem', transition: smooth }}>
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', maxWidth: '1200px', margin: '0 auto', gap: '1rem' }}>
           <div style={{ flex: '15 1 250px' }}>
             <h2 className="txt-h3">Tentang</h2>
-            <p className="txt-body">Website ini merupakan sistem informasi internal yang dikelola oleh Dinas Lingkungan Hidup dan Kehutanan (DLHK) DIY. 
-               Tujuannya adalah untuk memudahkan akses terhadap dokumen, data kegiatan, dan perencanaan di bidang lingkungan hidup dan kehutanan. 
-               Platform ini mendukung transparansi, koordinasi, dan efisiensi antarbidang dalam pengelolaan program kerja.</p>
+            <p className="txt-body">
+              Website ini merupakan sistem informasi internal yang dikelola oleh Dinas Lingkungan Hidup dan Kehutanan (DLHK) DIY. 
+              Tujuannya adalah untuk memudahkan akses terhadap dokumen, data kegiatan, dan perencanaan di bidang lingkungan hidup dan kehutanan. 
+              Platform ini mendukung transparansi, koordinasi, dan efisiensi antarbidang dalam pengelolaan program kerja.
+            </p>
           </div>
           <div style={{ flex: '0 1 150px' }}>
             <h3 className="txt-h3">Peta Situs</h3>
@@ -223,12 +240,8 @@ function Kehutanan() {
           <div style={{ flex: '1 1 200px' }}>
             <h3 className="txt-h3">Link Terkait</h3>
             <ul style={{ listStyle: 'none', padding: 0, lineHeight: '2' }}>
-              <li>
-                <a href="https://bapperida.jogjaprov.go.id/dataku/data_dasar/beranda" target="_blank" rel="noreferrer" className="footer-link txt-body">BAPERRIDA</a>
-              </li>
-              <li>
-                <a href="https://dlhk.jogjaprov.go.id/" target="_blank" rel="noreferrer" className="footer-link txt-body">DLHK DIY - PEMDA DIY</a>
-              </li>
+              <li><a href="https://bapperida.jogjaprov.go.id/dataku/data_dasar/beranda" target="_blank" rel="noreferrer" className="footer-link txt-body">BAPERRIDA</a></li>
+              <li><a href="https://dlhk.jogjaprov.go.id/" target="_blank" rel="noreferrer" className="footer-link txt-body">DLHK DIY - PEMDA DIY</a></li>
             </ul>
           </div>
           <div style={{ flex: '1 1 200px' }}>
@@ -239,7 +252,9 @@ function Kehutanan() {
               <a href="https://youtube.com/@dlhkdiy?si=KZpqEG9p_iD_sU87" target="_blank" rel="noreferrer"><FaYoutube className="social-icon" style={{ fontSize: '22px' }} /></a>
             </div>
             <h4 className="txt-h3">Bantuan Pelanggan</h4>
-            <a href="https://wa.me/6281329089589" target="_blank" rel="noreferrer" className="contact-btn txt-body"><FaHeadset /> Hubungi Kami</a>
+            <a href="https://wa.me/6281329089589" target="_blank" rel="noreferrer" className="contact-btn txt-body">
+              <FaHeadset /> Hubungi Kami
+            </a>
           </div>
         </div>
         <hr />
