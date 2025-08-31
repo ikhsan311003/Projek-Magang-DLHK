@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import 'react-calendar/dist/Calendar.css';
 import logo from '../assets/logo dlhk.png';
 import cardImage1 from '../assets/cardImage1.jpeg';
@@ -12,12 +12,20 @@ import headerBackground from '../assets/mainbg.png';
 import { FaInstagram, FaYoutube, FaHeadset, FaTwitter } from 'react-icons/fa';
 
 function HomePage() {
+  const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
 
+  // Close dropdown & scroll to top on route change
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50);
+    window.scrollTo(0, 0);
+    setShowDropdown(false);
+  }, [location.pathname]);
+
+  // Add shadow after a small scroll
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
@@ -38,7 +46,6 @@ function HomePage() {
     white: '#ffffff',
     lightBg: '#fefefe'
   };
-
   const smooth = 'all 0.3s ease';
 
   return (
@@ -82,8 +89,9 @@ function HomePage() {
         .contact-btn:hover { transform: scale(1.05); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); background-color: #ffe066; }
 
         /* =============================
-           Cards (default desktop/tablet: flex)
+           Cards (desktop flex, mobile 2 kolom)
            ============================= */
+        .cards { display:flex; flex-wrap:wrap; gap:1.5rem; justify-content:center; }
         .card {
           width: clamp(240px, 46vw, 300px);
           height: clamp(150px, 28vw, 180px);
@@ -98,33 +106,20 @@ function HomePage() {
         }
         .card img { width: 100%; height: 100%; object-fit: contain; }
 
-        /* Containers */
         .section-container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
 
-        /* =============================
-           MOBILE OVERRIDE: 2 kolom (≤600px)
-           ============================= */
+        /* Mobile: 2 kolom grid tanpa mengganggu desktop */
         @media (max-width: 600px) {
-          .cards {
-            display: grid !important;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 1rem !important;
+          .cards { 
+            display: grid !important; 
+            grid-template-columns: repeat(2, minmax(0,1fr)); 
+            gap: 1rem !important; 
             justify-items: center;
           }
-          .card {
-            width: 100% !important;
-            max-width: 220px;
-            height: 150px !important;
-            padding: 0.75rem;
-          }
+          .card { width: 100% !important; max-width: 220px; height: 150px !important; padding: 0.75rem; }
         }
         @media (max-width: 360px) {
           .card { max-width: 190px; height: 140px !important; }
-        }
-
-        /* Hilangkan efek hover di perangkat sentuh */
-        @media (hover: none) {
-          .card:hover { transform: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         }
 
         /* iOS safe area untuk navbar sticky */
@@ -133,7 +128,7 @@ function HomePage() {
         }
       `}</style>
 
-      {/* Navigation (tidak diubah) */}
+      {/* NAVBAR — disamakan seperti contoh yang kamu kirim */}
       <nav
         className="nav-pad"
         style={{
@@ -146,29 +141,55 @@ function HomePage() {
       >
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <img src={logo} alt="DLHK Logo" style={{ height: '45px' }} />
-          <span className="txt-brand" style={{ marginLeft: '12px', fontWeight: 600 }}>Dinas Lingkungan Hidup & Kehutanan</span>
+          <span className="txt-brand" style={{ marginLeft: '12px', fontWeight: 600 }}>
+            Dinas Lingkungan Hidup & Kehutanan
+          </span>
         </div>
         <ul style={{ display: 'flex', listStyle: 'none', gap: '1.5rem', margin: 0, position: 'relative' }}>
+          {/* Home highlight */}
           <li
             className="txt-nav"
             style={{
-              cursor: 'pointer', fontWeight: 700, borderBottom: `3px solid ${palette.yellow}`,
-              paddingBottom: '4px', transition: smooth
+              cursor: 'pointer',
+              fontWeight: 500,
+              borderBottom: location.pathname === '/' ? `3px solid ${palette.yellow}` : 'none',
+              paddingBottom: '4px',
+              transition: smooth
             }}
+            onClick={() => navigate('/')}
           >
             Home
           </li>
+
+          {/* Dropdown ala "Lingkungan Hidup ▾" seperti contoh */}
           <li
             className="txt-nav"
-            style={{ cursor: 'pointer', position: 'relative' }}
+            style={{
+              cursor: 'pointer',
+              position: 'relative',
+              fontWeight: 700,
+              borderBottom: location.pathname.startsWith('/lingkungan-hidup') || location.pathname.startsWith('/kehutanan')
+                ? `3px solid ${palette.yellow}` : 'none',
+              paddingBottom: '4px',
+              transition: smooth
+            }}
             onClick={() => setShowDropdown(!showDropdown)}
           >
-            Database ▾
+            Lingkungan Hidup ▾
             {showDropdown && (
               <ul style={{
-                position: 'absolute', top: '100%', right: 0, backgroundColor: '#fff',
-                boxShadow: '0 4px 8px rgba(0,0,0,0.1)', borderRadius: '6px', overflowY: 'auto',
-                maxHeight: '200px', zIndex: 999, padding: '0.5rem', listStyle: 'none', width: '180px'
+                position: 'absolute',
+                top: '100%',
+                right: 0,
+                backgroundColor: '#fff',
+                boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+                borderRadius: '6px',
+                overflowY: 'auto',
+                maxHeight: '200px',
+                zIndex: 999,
+                padding: '0.5rem',
+                listStyle: 'none',
+                width: '180px'
               }}>
                 {[
                   { label: 'Lingkungan Hidup', path: '/lingkungan-hidup' },
@@ -178,9 +199,18 @@ function HomePage() {
                     key={label}
                     onClick={() => { navigate(path); setShowDropdown(false); }}
                     className="txt-body"
-                    style={{ padding: '0.45rem 0.6rem', cursor: 'pointer', borderBottom: '1px solid #eee', transition: 'all 0.2s ease' }}
+                    style={{
+                      padding: '0.45rem 0.6rem',
+                      cursor: 'pointer',
+                      borderBottom: '1px solid #eee',
+                      backgroundColor: location.pathname === path ? '#f0f0f0' : 'transparent',
+                      fontWeight: location.pathname === path ? 'bold' : 'normal',
+                      transition: 'all 0.2s ease'
+                    }}
                     onMouseEnter={(e) => e.currentTarget.style.background = '#f0f0f0'}
-                    onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                    onMouseLeave={(e) => {
+                      if (location.pathname !== path) e.currentTarget.style.background = 'transparent';
+                    }}
                   >
                     {label}
                   </li>
@@ -191,11 +221,8 @@ function HomePage() {
         </ul>
       </nav>
 
-      {/* Hero */}
-      <header
-        className="hero"
-        style={{ background: `url(${headerBackground}) center/cover`, minHeight: '80vh', position: 'relative', color: '#fff', textAlign: 'center' }}
-      >
+      {/* HERO */}
+      <header style={{ background: `url(${headerBackground}) center/cover`, minHeight: '80vh', position: 'relative', color: '#fff', textAlign: 'center' }}>
         <div className="pad-header" style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '2rem' }}>
           <h1 className="txt-hero" style={{ marginBottom: '1rem' }}>DATABASE LINGKUNGAN HIDUP & KEHUTANAN</h1>
           <p className="txt-small" style={{ marginBottom: '1rem' }}>
@@ -212,16 +239,7 @@ function HomePage() {
       </div>
 
       {/* Cards */}
-      <section
-        className="fade-in cards section-container"
-        style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '1.5rem',
-          justifyContent: 'center',
-          padding: '0.5rem 1rem'
-        }}
-      >
+      <section className="fade-in cards section-container" style={{ padding: '0.5rem 1rem' }}>
         {cards.map(({ img, url }, index) => (
           <div
             key={index}
