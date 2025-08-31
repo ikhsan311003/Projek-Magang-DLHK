@@ -36,7 +36,7 @@ function HomePage() {
     darkGreen: '#1b5e20',
     yellow: '#fbc02d',
     white: '#ffffff',
-    lightBg: '#fefefe',
+    lightBg: '#fefefe'
   };
 
   const smooth = 'all 0.3s ease';
@@ -102,17 +102,15 @@ function HomePage() {
         .section-container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
 
         /* =============================
-           MOBILE OVERRIDE: 2 kolom
+           MOBILE OVERRIDE: 2 kolom (≤600px)
            ============================= */
         @media (max-width: 600px) {
-          /* ubah container cards jadi grid 2 kolom */
           .cards {
             display: grid !important;
             grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 1rem !important;
             justify-items: center;
           }
-          /* kartu isi 1 kolom penuh; tinggi pas untuk logo */
           .card {
             width: 100% !important;
             max-width: 220px;
@@ -135,7 +133,7 @@ function HomePage() {
         }
       `}</style>
 
-      {/* Navigation */}
+      {/* Navigation (tidak diubah) */}
       <nav
         className="nav-pad"
         style={{
