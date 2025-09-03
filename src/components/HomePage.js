@@ -82,7 +82,7 @@ function HomePage() {
         .contact-btn:hover { transform: scale(1.05); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); background-color: #ffe066; }
 
         /* =============================
-           Cards (default desktop/tablet: flex)
+           Cards: fleksibel di mobile
            ============================= */
         .card {
           width: clamp(240px, 46vw, 300px);
@@ -101,28 +101,24 @@ function HomePage() {
         /* Containers */
         .section-container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
 
-        /* =============================
-           MOBILE OVERRIDE: 2 kolom (≤600px)
-           ============================= */
-        @media (max-width: 600px) {
-          .cards {
-            display: grid !important;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 1rem !important;
-            justify-items: center;
-          }
-          .card {
-            width: 100% !important;
-            max-width: 220px;
-            height: 150px !important;
-            padding: 0.75rem;
-          }
+        /* Mobile polish */
+        @media (max-width: 768px) {
+          .nav-pad { padding: 0.5rem 1rem !important; }
+          .txt-nav { line-height: 1.6; }
+          .hero { min-height: 62vh !important; }
+          .pad-header { padding: 1.25rem !important; }
+          .cards { gap: 1rem !important; }
         }
-        @media (max-width: 360px) {
-          .card { max-width: 190px; height: 140px !important; }
+        @media (max-width: 480px) {
+          :root {
+            --fs-hero: clamp(1.6rem, 7vw + 0.2rem, 3rem);
+            --fs-h2:   clamp(1.05rem, 3.8vw, 1.5rem);
+            --fs-body: clamp(0.95rem, 3.2vw, 1rem);
+          }
+          .txt-small { line-height: 1.5; }
         }
 
-        /* Hilangkan efek hover di perangkat sentuh */
+        /* Hilangkan efek hover di perangkat sentuh agar tak 'melompat' */
         @media (hover: none) {
           .card:hover { transform: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         }
@@ -133,7 +129,7 @@ function HomePage() {
         }
       `}</style>
 
-      {/* Navigation (tidak diubah) */}
+      {/* Navigation */}
       <nav
         className="nav-pad"
         style={{
